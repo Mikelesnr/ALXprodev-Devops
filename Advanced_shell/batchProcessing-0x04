@@ -9,26 +9,16 @@ BASE_URL="https://pokeapi.co/api/v2/pokemon"
 # Maximum number of retries
 MAX_RETRIES=3
 
-# Loop through each Pokémon in the list
-for POKEMON in "${POKEMON_LIST[@]}"; do
-  # Define the URL for the API request
-  URL="$BASE_URL/$POKEMON"
-  
-  # Define the output file
-  OUTPUT_FILE="$POKEMON.json"
-  
-  # Initialize retry counter
-  RETRY_COUNT=0
-  
-  # Initialize success flag
-  SUCCESS=false
-  
-  # Retry loop
+# Function to fetch data for a single Pokémon
+fetch_pokemon_data() {
+  local POKEMON=$1
+  local URL="$BASE_URL/$POKEMON"
+  local OUTPUT_FILE="$POKEMON.json"
+  local RETRY_COUNT=0
+  local SUCCESS=false
+
   while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    # Make the API request and save the response to the output file
     curl -s -o "$OUTPUT_FILE" "$URL"
-    
-    # Check if the request was successful
     if [ $? -eq 0 ]; then
       echo "Data for $POKEMON saved to $OUTPUT_FILE"
       SUCCESS=true
@@ -36,17 +26,21 @@ for POKEMON in "${POKEMON_LIST[@]}"; do
     else
       echo "Failed to retrieve data for $POKEMON. Attempt $((RETRY_COUNT + 1)) of $MAX_RETRIES."
       RETRY_COUNT=$((RETRY_COUNT + 1))
-      
-      # Add a delay before retrying
       sleep 2
     fi
   done
-  
-  # If the request failed after all retries, log the error
+
   if [ "$SUCCESS" = false ]; then
     echo "Failed to retrieve data for $POKEMON after $MAX_RETRIES attempts." >> errors.txt
   fi
-  
-  # Add a delay between requests to handle rate-limiting
-  sleep 2
+}
+
+# Looping through each Pokémon in the list and fetch data in parallel
+for POKEMON in "${POKEMON_LIST[@]}"; do
+  fetch_pokemon_data "$POKEMON" &
 done
+
+# Waiting for all background processes to complete
+wait
+
+echo "All data retrieval processes completed."

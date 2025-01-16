@@ -4,17 +4,17 @@
 JSON_FILE="data.json"
 
 # Extract the Pokémon's name, height, weight, and type using jq
-NAME=$(jq -r '.name' "$JSON_FILE")
-HEIGHT=$(jq -r '.height' "$JSON_FILE")
-WEIGHT=$(jq -r '.weight' "$JSON_FILE")
-TYPE=$(jq -r '.types[0].type.name' "$JSON_FILE")
+name=$(jq -r '.name' "$JSON_FILE")
+height=$(jq -r '.height' "$JSON_FILE")
+weight=$(jq -r '.weight' "$JSON_FILE")
+type=$(jq -r '.types[0].type.name' "$JSON_FILE")
 
 # Convert height from decimeters to meters and weight from hectograms to kilograms
-HEIGHT=$(awk "BEGIN {print $HEIGHT / 10}")
-WEIGHT=$(awk "BEGIN {print $WEIGHT / 10}")
+FORMATTED_HEIGHT=$(awk "BEGIN {print $height / 10}")
+FORMATTED_WEIGHT=$(awk "BEGIN {print $weight / 10}")
 
 # Format the output using sed
-OUTPUT=$(echo "$NAME is of type $TYPE, weighs ${WEIGHT}kg, and is ${HEIGHT}m tall." | sed 's/^./\U&/')
+OUTPUT=$(echo "$name is of type $type, weighs ${FORMATTED_WEIGHT}kg, and is ${FORMATTED_HEIGHT}m tall." | sed 's/^./\U&/')
 
 # Print the formatted output
 echo "$OUTPUT"
