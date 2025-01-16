@@ -14,12 +14,12 @@ for FILE in *.json; do
   WEIGHT=$(jq -r '.weight' "$FILE")
   
   # Convert height from decimeters to meters and weight from hectograms to kilograms
-  HEIGHT=$(awk "BEGIN {print $HEIGHT / 10}")
-  WEIGHT=$(awk "BEGIN {print $WEIGHT / 10}")
+  FORMATTED_HEIGHT=$(awk "BEGIN {print $HEIGHT / 10}")
+  FORMATTED_WEIGHT=$(awk "BEGIN {print $WEIGHT / 10}")
   
   # Write the data to the CSV file
-  echo "$NAME,$HEIGHT,$WEIGHT" >> "$CSV_FILE"
+  echo "$NAME,$FORMATTED_HEIGHT,$FORMATTED_WEIGHT" >> "$CSV_FILE"
 done
 
 # Calculate the average height and weight using awk
-awk -F, 'NR > 1 {height += $2; weight += $3; count++} END {print "Average Height: " height/count "m"; print "Average Weight: " weight/count "kg"}' "$CSV_FILE"
+awk -F, 'NR > 1 {height += $2; weight += $3; count++} END {print "Average Height: " height/count "m"; print "Average Weight: " weight/count "kg"}' "$CSV_FILE" | sed 's/^/Average: /'
