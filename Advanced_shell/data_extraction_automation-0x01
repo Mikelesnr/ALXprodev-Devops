@@ -10,11 +10,11 @@ weight=$(jq -r '.weight' "$JSON_FILE")
 type=$(jq -r '.types[0].type.name' "$JSON_FILE")
 
 # Convert height from decimeters to meters and weight from hectograms to kilograms
-FORMATTED_HEIGHT=$(awk "BEGIN {print $height / 10}")
-FORMATTED_WEIGHT=$(awk "BEGIN {print $weight / 10}")
+formatted_height=$(awk "BEGIN {print $height / 10}")
+formatted_weight=$(awk "BEGIN {print $weight / 10}")
 
 # Format the output using sed
-OUTPUT=$(echo "$name is of type $type, weighs ${FORMATTED_WEIGHT}kg, and is ${FORMATTED_HEIGHT}m tall." | sed 's/^./\U&/')
+OUTPUT=$(echo "$name is of type $type, weighs ${formatted_weight}kg, and is ${formatted_height}m tall." | sed 's/^./\U&/')
 
 # Print the formatted output
 echo "$OUTPUT"
