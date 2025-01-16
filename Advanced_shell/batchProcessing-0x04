@@ -35,12 +35,15 @@ fetch_pokemon_data() {
   fi
 }
 
-# Looping through each Pokémon in the list and fetch data in parallel
+# Loop through each Pokémon in the list and fetch data in parallel
 for POKEMON in "${POKEMON_LIST[@]}"; do
   fetch_pokemon_data "$POKEMON" &
 done
 
-# Waiting for all background processes to complete
+# Wait for all background processes to complete
 wait
+
+# Check for any remaining background jobs and kill them if necessary
+jobs -p | xargs -r kill
 
 echo "All data retrieval processes completed."
